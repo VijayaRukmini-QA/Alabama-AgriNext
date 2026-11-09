@@ -1,0 +1,27 @@
+node_modules/
+.env
+.env.*
+!.env.example
+playwright-report/
+test-results/
+blob-report/
+reports/
+playwright/.auth/
+.auth/
+*.storageState.json
+*.log
+
+# Evidence artifacts (may contain emails/codes)
+*.webm
+*.zip
+trace/
+videos/
+# Brief files contain plain-text credentials - never commit
+AgriNext-CreateCustomerProfile-EndToEnd File
+AgriNext_Lender_Login_End to End PW Automation.md
+# Screenshots that show a real account email - kept locally only
+docs/screenshots/login-password-step.png
+docs/screenshots/login-empty-password.png
+docs/screenshots/login-wrong-password.png
+docs/screenshots/login-forgot-password.png
+docs/screenshots/post-login-landing.png

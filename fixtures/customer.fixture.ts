@@ -6,6 +6,7 @@ import { CreateProfileEmailStepPage } from '../pages/customer/CreateProfileEmail
 import { CreateProfileCodeStepPage } from '../pages/customer/CreateProfileCodeStepPage';
 import { SignUpProfileFormPage } from '../pages/customer/SignUpProfileFormPage';
 import { SmsVerificationStepPage } from '../pages/customer/SmsVerificationStepPage';
+import { SignInMfaStepPage } from '../pages/customer/SignInMfaStepPage';
 import { ApplyForLoanPage } from '../pages/customer/ApplyForLoanPage';
 import { YopmailInboxPage } from '../pages/third-party/YopmailInboxPage';
 import { ReceiveSmsInboxPage } from '../pages/third-party/ReceiveSmsInboxPage';
@@ -19,6 +20,7 @@ type CustomerPages = {
   profileFormPage: SignUpProfileFormPage;
   smsStepPage: SmsVerificationStepPage;
   applyForLoanPage: ApplyForLoanPage;
+  mfaStepPage: SignInMfaStepPage;
   /** Third-party inboxes live in their own page of the same context, so the app page stays untouched. */
   yopmailInbox: YopmailInboxPage;
   smsInbox: ReceiveSmsInboxPage;
@@ -37,6 +39,7 @@ export const test = base.extend<CustomerPages>({
   profileFormPage: async ({ page }, use) => use(new SignUpProfileFormPage(page)),
   smsStepPage: async ({ page }, use) => use(new SmsVerificationStepPage(page)),
   applyForLoanPage: async ({ page }, use) => use(new ApplyForLoanPage(page)),
+  mfaStepPage: async ({ page }, use) => use(new SignInMfaStepPage(page)),
   yopmailInbox: async ({ context }, use) => use(new YopmailInboxPage(await context.newPage())),
   smsInbox: async ({ context }, use) => use(new ReceiveSmsInboxPage(await context.newPage())),
 });

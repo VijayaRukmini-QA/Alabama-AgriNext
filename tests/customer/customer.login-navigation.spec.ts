@@ -4,7 +4,7 @@ import { uniqueYopmailEmail } from '../../utils/customerEmail';
 import { messages, syntheticValidPassword } from '../../test-data/customer.data';
 
 test.describe('Customer - sign in, forgot password and navigation', () => {
-  test('TC-C-13 @customer @smoke @regression password Show/Hide on /login toggles the field type and the button name', async ({ loginPage }) => {
+  test('TC-C-13 TC-S-20 TC-S-21 @customer @signin @smoke @regression password Show/Hide on /login toggles the field type and the button name', async ({ loginPage }) => {
     await loginPage.open();
     await loginPage.password.fill('Abcdefg1');
     await loginPage.expectPasswordMasked(true);
@@ -16,7 +16,7 @@ test.describe('Customer - sign in, forgot password and navigation', () => {
     await expect(loginPage.showPasswordButton).toBeVisible();
   });
 
-  test('TC-C-07 @customer @regression Sign in is disabled until both fields are filled', async ({ loginPage }) => {
+  test('TC-C-07 TC-S-02 TC-S-03 @customer @signin @regression Sign in is disabled until both fields are filled', async ({ loginPage }) => {
     await loginPage.open();
     await loginPage.expectSignInEnabled(false);
     await loginPage.email.fill('someone@yopmail.com');
@@ -25,14 +25,14 @@ test.describe('Customer - sign in, forgot password and navigation', () => {
     await loginPage.expectSignInEnabled(true);
   });
 
-  test('TC-C-07 @customer @regression @negative sign in with an unknown account shows a generic "Invalid email or password." toast', async ({ loginPage, page }) => {
+  test('TC-C-07 TC-S-08 @customer @signin @regression @negative sign in with an unknown account shows a generic "Invalid email or password." toast', async ({ loginPage, page }) => {
     await loginPage.open();
     await loginPage.signIn(uniqueYopmailEmail(), syntheticValidPassword());
     await loginPage.toast.expectMessage(messages.invalidLogin);
     await expect(page).toHaveURL(/\/login/);
   });
 
-  test('TC-C-07 @customer @regression Forgot password? on /login navigates to the reset page, and Sign in goes back', async ({ loginPage, forgotPasswordPage, page }) => {
+  test('TC-C-07 TC-S-16 TC-S-17 @customer @signin @regression Forgot password? on /login navigates to the reset page, and Sign in goes back', async ({ loginPage, forgotPasswordPage, page }) => {
     await loginPage.open();
     await loginPage.goToForgotPassword();
     await expect(page).toHaveURL(/\/forgot-password/);
@@ -42,14 +42,14 @@ test.describe('Customer - sign in, forgot password and navigation', () => {
     await expect(loginPage.signInButton).toBeVisible();
   });
 
-  test('TC-C-07 @customer @regression Create one on /login navigates to the create-profile email step', async ({ loginPage, emailStepPage, page }) => {
+  test('TC-C-07 TC-S-19 @customer @signin @regression Create one on /login navigates to the create-profile email step', async ({ loginPage, emailStepPage, page }) => {
     await loginPage.open();
     await loginPage.goToCreateProfile();
     await expect(page).toHaveURL(/\/create-profile/);
     await emailStepPage.expectLoaded();
   });
 
-  test('TC-C-02 @customer @regression landing page buttons lead to sign in and create profile', async ({ landingPage, loginPage, emailStepPage, page }) => {
+  test('TC-C-02 TC-S-01 @customer @signin @regression landing page buttons lead to sign in and create profile', async ({ landingPage, loginPage, emailStepPage, page }) => {
     await landingPage.open();
     await landingPage.expectLoaded();
     await landingPage.startSignIn();

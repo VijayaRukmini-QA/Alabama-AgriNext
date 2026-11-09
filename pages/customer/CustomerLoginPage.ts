@@ -53,4 +53,26 @@ export class CustomerLoginPage {
   async expectPasswordMasked(masked: boolean): Promise<void> {
     await expect(this.password).toHaveAttribute('type', masked ? 'password' : 'text');
   }
+
+  async pressEnterToSubmit(): Promise<void> {
+    await this.page.keyboard.press('Enter');
+  }
+
+  async expectEmailValue(value: string): Promise<void> {
+    await expect(this.email).toHaveValue(value);
+  }
+
+  async expectPasswordValue(value: string): Promise<void> {
+    await expect(this.password).toHaveValue(value);
+  }
+
+  /** While submitting the inputs are disabled and the button reads "Signing in…". */
+  async expectSubmitting(): Promise<void> {
+    await expect(this.page.getByRole('button', { name: /Signing in/ })).toBeVisible();
+    await expect(this.email).toBeDisabled();
+  }
+
+  async expectOnLoginForm(): Promise<void> {
+    await expect(this.signInButton).toBeVisible();
+  }
 }

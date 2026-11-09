@@ -1,5 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test';
-import { assertNotBlocked, ThirdPartyBlockedError } from '../../utils/thirdPartyGuard';
+import { assertNotBlocked, NAV_WINDOW_MS, ThirdPartyBlockedError } from '../../utils/thirdPartyGuard';
+import { pickNewestCode } from '../../utils/smsCodePicker';
 
 export type SmsCodeOptions = {
   /** Sender name shown in the inbox row. */
@@ -13,7 +14,6 @@ export type SmsCodeOptions = {
 
 const SITE = 'receive-smss.com';
 const MIN_POLL_MS = 5_000;
-const CODE_REGEX = /\b(\d{6})\b/;
 
 /**
  * Public SMS inbox (SMS_INBOX_URL). Use a SEPARATE page, not the app page.
@@ -34,8 +34,8 @@ export class ReceiveSmsInboxPage {
     .first();
 
   async open(inboxUrl: string): Promise<void> {
-    await this.page.goto(inboxUrl, { waitUntil: 'domcontentloaded' });
-    await assertNotBlocked(this.page, SITE);
+    const response = await this.page.goto(inboxUrl, { waitUntil: 'domcontentloaded' });
+    await assertNotBlocked(this.page, SITE, { windowMs: NAV_WINDOW_MS, response });
   }
 
   /** Clicks "Update Message" and guards against a bot wall. */
@@ -75,13 +75,11 @@ export class ReceiveSmsInboxPage {
       await expect(async () => {
         try {
           await this.updateMessages();
-          for (const row of await this.rowTexts(sender)) {
-            if (snapshot.has(row)) continue;
-            const code = row.match(CODE_REGEX)?.[1];
-            if (code && !excludeCodes.has(code)) {
-              found = code;
-              return;
-            }
+          const fresh = (await this.rowTexts(sender)).filter((row) => !snapshot.has(row));
+          const code = pickNewestCode(fresh, { sender, excludeCodes });
+          if (code) {
+            found = code;
+            return;
           }
         } catch (e) {
           if (e instanceof ThirdPartyBlockedError) {

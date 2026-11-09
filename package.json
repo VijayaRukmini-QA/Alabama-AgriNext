@@ -13,7 +13,8 @@
     "test:lender": "playwright test --project=chromium --project=mobile",
     "test:customer": "playwright test --project=customer-chromium --project=customer-mobile",
     "test:customer:e2e": "playwright test --project=customer-e2e",
-    "report": "playwright show-report reports/html-report"
+    "report": "playwright show-report reports/html-report",
+    "test:customer:signin": "playwright test --project=customer-chromium --project=customer-mobile --grep @signin"
   },
   "keywords": [],
   "author": "",

@@ -1,5 +1,5 @@
 import { expect, type FrameLocator, type Page } from '@playwright/test';
-import { assertNotBlocked, ThirdPartyBlockedError } from '../../utils/thirdPartyGuard';
+import { assertNotBlocked, NAV_WINDOW_MS, ThirdPartyBlockedError } from '../../utils/thirdPartyGuard';
 import { inboxName } from '../../utils/customerEmail';
 
 export type YopmailCodeOptions = {
@@ -39,16 +39,16 @@ export class YopmailInboxPage {
 
   /** Opens the inbox of `email` via the login URL. Throws ThirdPartyBlockedError on a bot wall. */
   async openInbox(email: string): Promise<void> {
-    await this.page.goto(`https://yopmail.com/en/?login=${encodeURIComponent(inboxName(email))}`, {
+    const response = await this.page.goto(`https://yopmail.com/en/?login=${encodeURIComponent(inboxName(email))}`, {
       waitUntil: 'domcontentloaded',
     });
-    await assertNotBlocked(this.page, SITE);
+    await assertNotBlocked(this.page, SITE, { windowMs: NAV_WINDOW_MS, response });
   }
 
   /** Alternative to openInbox: type the name into the Login box (home page). */
   async openInboxViaLoginBox(email: string): Promise<void> {
-    await this.page.goto('https://yopmail.com/en/', { waitUntil: 'domcontentloaded' });
-    await assertNotBlocked(this.page, SITE);
+    const response = await this.page.goto('https://yopmail.com/en/', { waitUntil: 'domcontentloaded' });
+    await assertNotBlocked(this.page, SITE, { windowMs: NAV_WINDOW_MS, response });
     await this.loginBox.fill(inboxName(email));
     await this.loginBox.press('Enter');
     await assertNotBlocked(this.page, SITE);

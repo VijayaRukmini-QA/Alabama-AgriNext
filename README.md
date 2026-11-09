@@ -1,11 +1,12 @@
 # AgriNext (Alabama Ag Credit) - Playwright E2E Automation
 
-This framework uses Playwright Test 1.65, TypeScript and the Page Object Model. It covers two modules:
+This framework uses Playwright Test 1.65, TypeScript and the Page Object Model. It covers three modules:
 
 | Module | App | Playwright projects | Specs |
 |---|---|---|---|
 | Lender Login | `BASE_URL` (lender portal, Microsoft Entra sign-in) | `chromium`, `mobile` | `tests/e2e/` |
 | Create Customer Profile | `CUSTOMER_BASE_URL` (customer portal, Entra External ID native auth) | `customer-chromium`, `customer-mobile`, `customer-e2e` | `tests/customer/` |
+| Customer Sign In (incl. SMS MFA) | `CUSTOMER_BASE_URL` `/login` | `customer-chromium`, `customer-mobile`, `customer-e2e` (select with `--grep @signin`) | `tests/customer/signin/` |
 
 Each project sets its own `testDir` and `baseURL`, so the two modules never pick up each other's specs.
 
@@ -30,6 +31,7 @@ Secrets are read only through `config/env.ts`, which uses lazy getters. Values p
 
 ```bash
 npm run test:lender          # lender suite
+npm run test:customer:signin # customer sign-in tests only (@signin)
 npm run test:customer        # customer suite (mocked auth for form/SMS steps + a few real calls)
 npm run test:smoke           # @smoke across both modules
 # real end-to-end customer registration (one run; uses yopmail + receive-smss):
@@ -92,9 +94,25 @@ docs/                         acceptance criteria, test plans, exploratory findi
 **Defects**
 - Tests assert the acceptance criteria. Known app defects are left failing, with a `defect` annotation and the F-ID in the test title. They are never masked.
 
+## Customer Sign In design notes
+
+**Mocked MFA**
+- The MFA step renders inside `/login` ("Multi-factor authentication", "Verify code"). It is tested by mocking the app's Entra native-auth responses in `utils/signInMocks.ts`.
+- Real calls per run: 3 sign-in submits with synthetic unknown emails. There are never wrong-password attempts against `CUSTOMER_EMAIL`.
+
+**Real end-to-end check (TC-S-60)** runs under `RUN_CUSTOMER_E2E=1`:
+- It preflights the SMS inbox first and skips as BLOCKED on a Cloudflare challenge.
+- It then makes one real sign-in and skips as BLOCKED if the account does not exist.
+- Only then does it read the newest "Alabama Ag Credit" SMS (`utils/smsCodePicker.ts`).
+
+**Known blocker**
+- `CUSTOMER_EMAIL` is not registered in the Dev tenant (S-F-01).
+
 ## Docs
 
 | Module | Documents |
 |---|---|
 | Lender | `docs/TEST-PLAN-Lender-Login.md`, `docs/EXPLORATORY-FINDINGS-Lender-Login.md` |
 | Customer | `docs/ACCEPTANCE-CRITERIA-Create-Customer-Profile.md`, `docs/TEST-PLAN-Create-Customer-Profile.md`, `docs/EXPLORATORY-FINDINGS-Create-Customer-Profile.md`, `docs/TEST-EXECUTION-SUMMARY-Create-Customer-Profile.md` |
+| Customer Sign In | `docs/ACCEPTANCE-CRITERIA-Customer-Signin.md`, `docs/TEST-PLAN-Customer-Signin.md`, `docs/TEST-CASES-Customer-Signin.md`, `docs/EXPLORATORY-FINDINGS-Customer-Signin.md`, `docs/TEST-EXECUTION-SUMMARY-Customer-Signin.md`, `qa/customer-signin/validation.md` |
+| Excel | `Excels/TEST-PLAN-Create-Customer-Profile.xlsx` |

@@ -89,7 +89,7 @@ test.describe('Customer - accessibility', () => {
     await smsStepPage.toast.expectMessage(messages.invalidSmsCode); // the mock rejects the code, proving a submit happened
   });
 
-  test('TC-C-21 @customer @regression @a11y keyboard: password Show/Hide on /login is operable with Enter and Space and exposes its state by name', async ({ loginPage, page }) => {
+  test('TC-C-21 TC-S-23 @customer @signin @regression @a11y keyboard: password Show/Hide on /login is operable with Enter and Space and exposes its state by name', async ({ loginPage, page }) => {
     await loginPage.open();
     await loginPage.password.fill('Abcdefg1');
     await loginPage.showPasswordButton.focus();

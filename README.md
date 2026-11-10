@@ -1,12 +1,13 @@
 # AgriNext (Alabama Ag Credit) - Playwright E2E Automation
 
-This framework uses Playwright Test 1.65, TypeScript and the Page Object Model. It covers three modules:
+This framework uses Playwright Test 1.65, TypeScript and the Page Object Model. It covers four modules:
 
 | Module | App | Playwright projects | Specs |
 |---|---|---|---|
 | Lender Login | `BASE_URL` (lender portal, Microsoft Entra sign-in) | `chromium`, `mobile` | `tests/e2e/` |
 | Create Customer Profile | `CUSTOMER_BASE_URL` (customer portal, Entra External ID native auth) | `customer-chromium`, `customer-mobile`, `customer-e2e` | `tests/customer/` |
 | Customer Sign In (incl. SMS MFA) | `CUSTOMER_BASE_URL` `/login` | `customer-chromium`, `customer-mobile`, `customer-e2e` (select with `--grep @signin`) | `tests/customer/signin/` |
+| Customer Loan Application (Land & Home) | `CUSTOMER_BASE_URL` `/apply-for-a-loan` | `customer-chrome` (Chrome channel, `--grep @loan`) | `tests/customer/loan/` |
 
 Each project sets its own `testDir` and `baseURL`, so the two modules never pick up each other's specs.
 
@@ -31,6 +32,7 @@ Secrets are read only through `config/env.ts`, which uses lazy getters. Values p
 
 ```bash
 npm run test:lender          # lender suite
+npm run test:customer:loan   # loan application (Chrome channel); :ui for UI mode
 npm run test:customer:signin # customer sign-in tests only (@signin)
 npm run test:customer        # customer suite (mocked auth for form/SMS steps + a few real calls)
 npm run test:smoke           # @smoke across both modules
@@ -108,6 +110,17 @@ docs/                         acceptance criteria, test plans, exploratory findi
 **Known blocker**
 - `CUSTOMER_EMAIL` is not registered in the Dev tenant (S-F-01).
 
+## Customer Loan Application (Land & Home) notes
+
+**Status:** blocked after sign-in.
+- `CUSTOMER_EMAIL` is not registered (B-L1). Only the signed-out checks are automated (`tests/customer/loan/`): TC-L-01..06 and TC-L-57.
+- TC-L-06 is a blocker-evidence test. It fails once the account exists, which is the signal to explore the loan screens and build TC-L-07..66.
+
+**How it runs**
+- Runs on real Google Chrome (`customer-chrome` project, `channel: 'chrome'`).
+- Interactive UI mode: `npm run test:customer:loan:ui`.
+- `LOAN_TEST_SSN` (synthetic) lives in `.env` only. TC-L-57 fails if an SSN-shaped literal or that value ever appears in source, test data or reports.
+
 ## Docs
 
 | Module | Documents |
@@ -115,4 +128,5 @@ docs/                         acceptance criteria, test plans, exploratory findi
 | Lender | `docs/TEST-PLAN-Lender-Login.md`, `docs/EXPLORATORY-FINDINGS-Lender-Login.md` |
 | Customer | `docs/ACCEPTANCE-CRITERIA-Create-Customer-Profile.md`, `docs/TEST-PLAN-Create-Customer-Profile.md`, `docs/EXPLORATORY-FINDINGS-Create-Customer-Profile.md`, `docs/TEST-EXECUTION-SUMMARY-Create-Customer-Profile.md` |
 | Customer Sign In | `docs/ACCEPTANCE-CRITERIA-Customer-Signin.md`, `docs/TEST-PLAN-Customer-Signin.md`, `docs/TEST-CASES-Customer-Signin.md`, `docs/EXPLORATORY-FINDINGS-Customer-Signin.md`, `docs/TEST-EXECUTION-SUMMARY-Customer-Signin.md`, `qa/customer-signin/validation.md` |
-| Excel | `Excels/TEST-PLAN-Create-Customer-Profile.xlsx` |
+| Customer Loan Application | `docs/ACCEPTANCE-CRITERIA-Customer-Loan-Application.md`, `docs/TEST-PLAN-Customer-Loan-Application.md`, `docs/TEST-CASES-Customer-Loan-Application.md`, `docs/EXPLORATORY-FINDINGS-Customer-Loan-Application.md`, `docs/TEST-EXECUTION-SUMMARY-Customer-Loan-Application.md`, `qa/customer-loan/` |
+| Excel | `Excels/TEST-PLAN-Create-Customer-Profile.xlsx`, `Excels/TEST-PLAN-Customer-Signin.xlsx` |

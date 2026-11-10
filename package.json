@@ -14,6 +14,8 @@
     "test:customer": "playwright test --project=customer-chromium --project=customer-mobile",
     "test:customer:e2e": "playwright test --project=customer-e2e",
     "report": "playwright show-report reports/html-report",
+    "test:customer:loan": "playwright test --project=customer-chrome",
+    "test:customer:loan:ui": "playwright test --ui --project=customer-chrome",
     "test:customer:signin": "playwright test --project=customer-chromium --project=customer-mobile --grep @signin"
   },
   "keywords": [],

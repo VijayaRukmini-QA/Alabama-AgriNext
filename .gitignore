@@ -28,3 +28,6 @@ docs/screenshots/post-login-landing.png
 # Brief/prompt files (any extension) contain plain-text credentials - never commit
 AgriNext-*End*File*
 AgriNext_*End to End*
+# Any AgriNext brief/prompt file (root or Excels/) may hold credentials - never commit
+AgriNext*.md
+AgriNext*.docx

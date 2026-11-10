@@ -47,7 +47,8 @@ export default defineConfig({
         trace: 'retain-on-failure',
         video: 'retain-on-failure',
       },
-      grepInvert: /@e2e-full|@mobile/,
+      // @loan-signin = TC-L-06, one real sign-in attempt; kept out of the broad run to avoid extra attempts (lockout risk).
+      grepInvert: /@e2e-full|@mobile|@loan-signin/,
     },
     {
       name: 'customer-mobile',
@@ -63,6 +64,20 @@ export default defineConfig({
       timeout: 10 * 60_000,
       use: { ...devices['Desktop Chrome'], baseURL: CUSTOMER_BASE_URL },
       grep: /@e2e-full/,
+    },
+    // Customer loan application (signed-out checks today). Real Chrome channel, evidence on every test.
+    {
+      name: 'customer-chrome',
+      testDir: 'tests/customer',
+      use: {
+        ...devices['Desktop Chrome'],
+        channel: 'chrome',
+        baseURL: CUSTOMER_BASE_URL,
+        screenshot: 'on',
+        trace: 'retain-on-failure',
+        video: 'retain-on-failure',
+      },
+      grep: /@loan/,
     },
   ],
 });

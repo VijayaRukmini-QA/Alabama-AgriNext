@@ -63,3 +63,12 @@ export function getCustomerLastName(): string {
 export function getSmsInboxUrl(): string {
   return required('SMS_INBOX_URL');
 }
+
+// ---------------------------------------------------------------- Customer loan application
+
+/** SSN used by the (blocked) loan tests. Lazy; registered so the logger masks it. Never hard-code or print it. */
+export function getLoanTestSsn(): string {
+  const v = required('LOAN_TEST_SSN');
+  registerSecret(v);
+  return v;
+}
